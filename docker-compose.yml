@@ -2,7 +2,7 @@ services:
   django_app:
     container_name: django_app
     entrypoint: ["/entrypoint.sh"]
-    command: ["uvicorn", "know_your_fan.asgi:application", "--reload", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+    command: ['python', 'manage.py', 'runserver', '0.0.0.0:8000'] # ["uvicorn", "know_your_fan.asgi:application", "--reload", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
     build:
       context: .
     ports:

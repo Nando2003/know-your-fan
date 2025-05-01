@@ -11,7 +11,7 @@ WORKDIR /app
 EXPOSE 8000
 
 RUN pip install --upgrade pip && \
-    pip install -r /app/requirements.txt && \
+    pip install --no-cache-dir -r /app/requirements.txt && \
     adduser --disabled-password --no-create-home duser && \
     mkdir -p /app/staticfiles && \
     chown -R duser:duser /app && \

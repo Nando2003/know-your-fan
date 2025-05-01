@@ -1,0 +1,28 @@
+{% comment %} templates/include/navbar.html {% endcomment %}
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2C3E50;">
+  <div class="container">
+    <!-- Marca estilizada: KY em branco e F em vermelho -->
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+      <span class="fw-bold text-white me-1">KY</span>
+      <span class="fw-bold" style="color: #e63946;">F</span>
+    </a>
+
+    <!-- Botão para mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLogout" aria-controls="navbarLogout" aria-expanded="false" aria-label="Alternar navegação">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Seção de logout alinhada à direita -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarLogout">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-right"></i> Sair
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

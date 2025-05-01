@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'documents',
+    'django_bootstrap5',
+    
+    'accounts',
     
 ]
 
@@ -68,7 +70,7 @@ ROOT_URLCONF = 'know_your_fan.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / "templates" ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -192,3 +194,32 @@ CACHES = {
 
 CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_CELERY}"
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+
+# Bootstrap5 configuration
+
+BOOTSTRAP5 = {
+    # importa jQuery automaticamente (se precisar dos plugins que dependem dele)
+    "include_jquery": True,
+    
+    # coloca as tags <script> no final do <body>
+    "javascript_in_head": False,
+
+    # CSS customizado: tema Flatly do Bootswatch
+    "css_url": {
+        "url": "https://cdn.jsdelivr.net/npm/bootswatch@5/dist/flatly/bootstrap.min.css",
+        "integrity": "",
+        "crossorigin": "anonymous",
+    },
+
+    # JS do Bootstrap 5 (bundle inclui Popper)
+    "javascript_url": {
+        "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js",
+        "integrity": "",
+        "crossorigin": "anonymous",
+    },
+}
+
+LOGIN_URL = "/accounts/login/"
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"

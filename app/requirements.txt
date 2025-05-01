@@ -9,3 +9,5 @@ django-redis==5.4.0
 
 # Celery
 celery==5.5.2
+
+django-bootstrap5==25.1
