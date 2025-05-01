@@ -1,0 +1,27 @@
+services:
+  django_app:
+    container_name: django_app
+    build:
+      context: .
+    ports:
+      - 3000:8000
+    volumes:
+      - ./app:/app
+    env_file:
+      - ./dotenv_files/.env
+    depends_on:
+      - django_psql
+    restart: unless-stopped
+  
+  django_psql:
+    container_name: django_psql
+    image: postgres:16-alpine
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data
+    env_file:
+      - ./dotenv_files/.env
+    ports:
+      - 3001:5432
+    environment:
+      - TZ=America/Sao_Paulo
+    restart: unless-stopped
