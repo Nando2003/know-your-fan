@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'documents',
+    
 ]
 
 MIDDLEWARE = [
@@ -145,7 +148,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-if DEBUG:
+if DEBUG and False:
     
     LOGGING = {
         'version': 1,
@@ -162,3 +165,30 @@ if DEBUG:
             },
         },
     }
+    
+
+# Configuração do Redis 
+
+REDIS_HOST = os.getenv("REDIS_HOST", "change-me")
+
+REDIS_PORT = os.getenv("REDIS_PORT", "change-me")
+
+REDIS_DB_CACHE = os.getenv("REDIS_DB_CACHE", "change-me")
+
+REDIS_DB_CELERY = os.getenv("REDIS_DB_CELERY", "change-me")
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_CACHE}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
+# Celery configuration
+
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB_CELERY}"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL

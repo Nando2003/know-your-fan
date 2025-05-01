@@ -1,6 +1,8 @@
 services:
   django_app:
     container_name: django_app
+    entrypoint: ["/entrypoint.sh"]
+    command: ["uvicorn", "know_your_fan.asgi:application", "--reload", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
     build:
       context: .
     ports:
@@ -11,6 +13,7 @@ services:
       - ./dotenv_files/.env
     depends_on:
       - django_psql
+      - redis
     restart: unless-stopped
   
   django_psql:
@@ -25,3 +28,33 @@ services:
     environment:
       - TZ=America/Sao_Paulo
     restart: unless-stopped
+
+  redis:
+    container_name: redis
+    image: redis:7-alpine
+    volumes:
+      - ./data/redis:/data
+    env_file:
+      - ./dotenv_files/.env
+    ports:
+      - 3002:6379
+    environment:
+      - TZ=America/Sao_Paulo
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: unless-stopped
+  
+  celery:
+    container_name: celery
+    entrypoint: ["/entrypoint.sh"]
+    command: ["celery", "--app=know_your_fan.celery:app", "worker", "-l", "INFO"]
+    working_dir: /app
+    build:
+      context: .
+    volumes:
+      - ./app:/app
+    env_file:
+      - ./dotenv_files/.env
+    depends_on:
+      - redis
+    restart: unless-stopped
+
