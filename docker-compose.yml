@@ -1,30 +1,33 @@
+version: '3.9'
+
 services:
   django_app:
     container_name: django_app
-    entrypoint: ["/entrypoint.sh"]
-    command: ['python', 'manage.py', 'runserver', '0.0.0.0:8000'] # ["uvicorn", "know_your_fan.asgi:application", "--reload", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
     build:
       context: .
     ports:
-      - 3000:8000
+      - "3000:8000"
     volumes:
-      - ./app:/app
+      - ./django_app:/django_app
+      - staticfiles:/django_app/staticfiles
     env_file:
       - ./dotenv_files/.env
+    environment:
+      - RUN_MODE=web
     depends_on:
       - django_psql
       - redis
     restart: unless-stopped
-  
+
   django_psql:
     container_name: django_psql
     image: postgres:16-alpine
     volumes:
-      - ./data/postgres/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     env_file:
       - ./dotenv_files/.env
     ports:
-      - 3001:5432
+      - "3001:5432"
     environment:
       - TZ=America/Sao_Paulo
     restart: unless-stopped
@@ -33,28 +36,32 @@ services:
     container_name: redis
     image: redis:7-alpine
     volumes:
-      - ./data/redis:/data
+      - redis_data:/data
     env_file:
       - ./dotenv_files/.env
     ports:
-      - 3002:6379
+      - "3002:6379"
     environment:
       - TZ=America/Sao_Paulo
     command: ["redis-server", "--appendonly", "yes"]
     restart: unless-stopped
-  
+
   celery:
     container_name: celery
-    entrypoint: ["/entrypoint.sh"]
-    command: ["celery", "--app=know_your_fan.celery:app", "worker", "-l", "INFO"]
-    working_dir: /app
     build:
       context: .
     volumes:
-      - ./app:/app
+      - ./django_app:/django_app
     env_file:
       - ./dotenv_files/.env
+    environment:
+      - RUN_MODE=celery
     depends_on:
+      - django_psql
       - redis
     restart: unless-stopped
 
+volumes:
+  postgres_data:
+  redis_data:
+  staticfiles:

@@ -1,21 +1,29 @@
 #!/bin/sh
-mkdir -p /django_app/staticfiles
-chown -R duser:duser /django_app
+set -e
 
+# 1) Garante pasta de estáticos (no named volume)
+# mkdir -p /django_app/staticfiles
+
+# 2) Espera Postgres estar pronto
 while ! nc -z "$POSTGRES_HOST" "$POSTGRES_PORT"; do
-  echo "🟡 Waiting for Postgres Database Startup ($POSTGRES_HOST $POSTGRES_PORT) ..."
   sleep 2
 done
-echo "✅ Postgres Database Started Successfully ($POSTGRES_HOST:$POSTGRES_PORT)"
 
+# 3) Celery vs Web
+if [ "$RUN_MODE" = "celery" ]; then
+  exec celery --app=core.celery:app worker --loglevel=INFO
+fi
+
+# 4) Coleta estáticos, migrações e testes
 python manage.py collectstatic --noinput
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
-
-if [ "$1" = "celery" ]; then
-  exec "$@"
-fi
-
 python manage.py test
 
-exec "$@"
+# 5) Uvicorn
+if [ "$DEBUG" = "1" ]; then
+  echo "DEBUG MODE 🤖"
+  exec python manage.py runserver 0.0.0:8000
+else
+  exec uvicorn core.asgi:application --host 0.0.0.0 --port 8000 --workers 4
+fi
