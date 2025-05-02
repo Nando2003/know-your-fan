@@ -1,0 +1,30 @@
+{% load static %}
+<nav class="navbar navbar-light bg-light shadow-sm mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+
+        <!-- Esquerda: imagem + título -->
+        <div class="d-flex align-items-center">
+            <img src="{% static 'img/main.png' %}" alt="Logo" class="me-2" width="38" height="38">
+            <a href="#" class="text-decoration-none">
+                <span class="fw-bold" style="font-size: 1.8rem; font-family: 'Poppins', sans-serif; color: #000;">
+                    Know Your Fan
+                </span>
+            </a>
+        </div>
+
+        <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+            {% csrf_token %}
+
+            <button type="submit" style="font-size: 1.0rem;" class="btn btn-outline-dark btn-sm px-4 hover-grow" id="leave_button_id">
+                Sair
+            </button>
+
+        </form>
+        
+    </div>
+
+    {% block scripts %}
+    <script src="{% static 'js/alert_before_leave.js' %}?v=3"></script>
+    {% endblock %}
+
+</nav>

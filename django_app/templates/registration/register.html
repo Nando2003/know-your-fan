@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Registrar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="container text-center bg-light p-4 rounded" style="max-width: 700px;">
+
+        <div class="d-flex align-items-center justify-content-center mb-4">
+            <img src="{% static 'img/main.png' %}" alt="Logo" class="me-3" style="width: 50px; height: 50px;">
+            <h2 class="m-0" style="font-family: 'Poppins', sans-serif; font-weight: 550;">Criar Torcedor</h2>
+        </div>
+        
+        {% bootstrap_messages %}
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3 text-start">
+                <label for="id_username" class="form-label">Usuário:</label>
+                {% bootstrap_field form.username show_label=False %}
+            </div>
+
+            <div class="mb-3 text-start">
+                <label for="id_email" class="form-label">E-mail:</label>
+                {% bootstrap_field form.email show_label=False %}
+            </div>
+
+            <div class="mb-3 text-start">
+                <label for="id_password1" class="form-label">Senha:</label>
+                {% bootstrap_field form.password1 show_label=False %}
+            </div>
+
+            <div class="mb-3 text-start">
+                <label for="id_password2" class="form-label">Confirmar a Senha:</label>
+                {% bootstrap_field form.password2 show_label=False %}
+                <div class="invalid-feedback" id="password-error">
+                    As senhas não coincidem.
+                </div>
+            </div>            
+
+            {% bootstrap_button "Criar Conta" button_type="submit" button_class="btn btn-success w-100 mt-3 hover-grow" id="submit-button" disabled=True %}
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{% url 'accounts:login' %}" class="text-decoration-none small fw-semibold">
+                Já tem uma conta? Faça login!
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/verify_password.js' %}?v=3"></script>
+{% endblock %}
+
+
