@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Validação{% endblock %}
+
+{% block content %}
+
+{% include "includes/navbar.html" %}
+
+<div class="d-flex justify-content-center align-items-start" style="min-height: 80vh; padding-top: 20vh;">
+    <div class="container text-center bg-light p-4 rounded" style="max-width: 700px;">
+
+        <div class="d-flex align-items-center justify-content-center mb-4">
+            <h2 class="m-0" style="font-family: 'Poppins', sans-serif; font-weight: 400; font-weight: bold;">Valide sua Torcida</h2>
+        </div>
+
+        {% bootstrap_messages %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger text-start">
+                {% for error in form.non_field_errors %}
+                    <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3 text-start">
+                    <label for="id_first_name" class="form-label">Nome:</label>
+                    {% bootstrap_field form.first_name show_label=False placeholder="Primeiro Nome" %}
+                </div>
+            
+                <div class="col-md-6 mb-3 text-start">
+                    <label for="id_last_name" class="form-label">Sobrenome:</label>
+                    {% bootstrap_field form.last_name show_label=False placeholder="Último Nome" %}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3 text-start">
+                    <label for="id_unique_identifier" class="form-label">CPF:</label>
+                    {% bootstrap_field form.unique_identifier show_label=False placeholder="123.456.789-00" %}
+                </div>
+
+                <div class="col-md-6 mb-3 text-start">
+                    <label for="id_birth_date" class="form-label">Data de Nascimento:</label>
+                    {% bootstrap_field form.birth_date show_label=False %}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3 text-start">
+                    <label for="id_rg_front" class="form-label">RG - Frente:</label>
+                    {% bootstrap_field form.rg_front show_label=False %}
+                </div>
+            
+                <div class="col-md-6 mb-3 text-start">
+                    <label for="id_rg_back" class="form-label">RG - Verso:</label>
+                    {% bootstrap_field form.rg_back show_label=False %}
+                </div>
+            </div>
+
+            {% bootstrap_button "Validar" button_type="submit" button_class="btn btn-success w-100 mt-3 hover-grow" id="submit-button" disabled=True%}
+        </form>
+
+    </div>
+</div> 
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/cpf_validation.js' %}?v=3"></script>
+{% endblock %}

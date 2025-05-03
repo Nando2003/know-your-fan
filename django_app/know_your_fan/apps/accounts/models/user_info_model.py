@@ -10,16 +10,22 @@ class UserInfo(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
 
-    unique_identifier = models.CharField(max_length=11, unique=True)
+    unique_identifier = models.CharField(max_length=14, unique=True)
     birth_date = models.DateField()
     
     def clean(self):
         
         def validate_birth_date(birth_date: datetime.date):
+            if birth_date is None:
+                raise ValidationError({'birth_date': 'A data de nascimento não pode ser vazia'})
+            
             if birth_date > datetime.date.today():
                 raise ValidationError({'birth_date': 'A data de nascimento não pode ser futura'})
         
         def validate_unique_identifier(unique_identifier: str):
+            if unique_identifier is None:
+                raise ValidationError({'unique_identifier': 'O CPF não pode ser vazio'})
+            
             unique_identifier = re.sub(r'\D', '', self.unique_identifier)
             
             if len(unique_identifier) != 11 or unique_identifier == unique_identifier[0] * 11:

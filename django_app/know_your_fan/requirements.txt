@@ -3,7 +3,6 @@ uvicorn[standard]
 psycopg2-binary==2.9.10
 
 django-redis==5.4.0
-django-formtools==2.5.1
 django-bootstrap5==25.1
 
 redis==6.0.0
