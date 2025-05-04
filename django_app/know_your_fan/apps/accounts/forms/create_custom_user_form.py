@@ -17,4 +17,3 @@ class CustomUserCreateForm(UserCreationForm):
 
         return cleaned_data
         
-    

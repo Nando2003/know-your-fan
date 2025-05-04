@@ -8,12 +8,14 @@ services:
     ports:
       - "3000:8000"
     volumes:
-      - ./django_app:/django_app
-      - staticfiles:/django_app/know_your_fan/staticfiles
+      - ./django_app/know_your_fan:/know_your_fan
+      - staticfiles:/know_your_fan/staticfiles
     env_file:
       - ./dotenv_files/.env
     environment:
       - RUN_MODE=web
+    networks:
+      - internal_net
     depends_on:
       - django_psql
       - redis
@@ -30,6 +32,8 @@ services:
       - "3001:5432"
     environment:
       - TZ=America/Sao_Paulo
+    networks:
+      - internal_net
     restart: unless-stopped
 
   redis:
@@ -44,6 +48,8 @@ services:
     environment:
       - TZ=America/Sao_Paulo
     command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      - internal_net
     restart: unless-stopped
 
   celery:
@@ -51,17 +57,38 @@ services:
     build:
       context: ./django_app
     volumes:
-      - ./django_app:/django_app
+      - ./django_app/know_your_fan:/know_your_fan
     env_file:
       - ./dotenv_files/.env
     environment:
       - RUN_MODE=celery
+    networks:
+      - internal_net
     depends_on:
       - django_psql
       - redis
+    restart: unless-stopped
+
+  fastapi_app:
+    container_name: fastapi_app
+    build:
+      context: ./fastapi_app
+    volumes:
+      - ./fastapi_app/id_document_ocr:/id_document_ocr
+    env_file:
+      - ./dotenv_files/.env
+    ports:
+      - "3003:8001"
+    networks:
+      - internal_net
+    mem_limit: 4g
     restart: unless-stopped
 
 volumes:
   postgres_data:
   redis_data:
   staticfiles:
+
+networks:
+  internal_net:
+    driver: bridge

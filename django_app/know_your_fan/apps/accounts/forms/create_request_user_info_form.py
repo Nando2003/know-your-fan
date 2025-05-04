@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
-from apps.accounts.models.user_info_model import UserInfo
+from apps.accounts.models.request_user_info_model import RequestUserInfo
 
 
 def validate_image_extension(image: UploadedFile):
@@ -9,7 +9,7 @@ def validate_image_extension(image: UploadedFile):
         raise ValidationError("Envie uma imagem JPG ou PNG.")
     
 
-class UserInfoCreateForm(forms.ModelForm):
+class RequestUserInfoCreateForm(forms.ModelForm):
     
     birth_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),
@@ -29,7 +29,7 @@ class UserInfoCreateForm(forms.ModelForm):
     )
     
     class Meta:
-        model = UserInfo
+        model = RequestUserInfo
         
         fields = (
             'first_name', 
@@ -37,9 +37,3 @@ class UserInfoCreateForm(forms.ModelForm):
             'unique_identifier', 
             'birth_date'
         )
-        
-        # help_texts = {
-        #     'first_name': 'Seu primeiro nome (sem abreviações).',
-        #     'unique_identifier': 'Digite seu CPF sem pontos ou traço.',
-        # }
-

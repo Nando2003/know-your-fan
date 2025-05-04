@@ -221,7 +221,7 @@ BOOTSTRAP5 = {
 # Login and logout URLs
 
 LOGIN_REDIRECT_URL = "/accounts/validation/"
-
 LOGIN_URL = "/accounts/login/"
-
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+X_WEBHOOK_TOKEN = os.environ.get("X_WEBHOOK_TOKEN", "change-me")

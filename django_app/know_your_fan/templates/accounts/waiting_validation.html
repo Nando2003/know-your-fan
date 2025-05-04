@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Aguardando Validação{% endblock %}
+
+{% block content %}
+{% include "includes/navbar.html" %}
+
+<div class="w-100 mt-3">
+    {% bootstrap_messages %}
+</div>
+
+<div class="d-flex justify-content-center align-items-start" style="min-height: 80vh; padding-top: 20vh;">
+    <div class="container text-center bg-light p-4 rounded" style="max-width: 600px;">
+
+        <div id="loading-section">
+            <h2 class="mb-3" style="font-family: 'Poppins', sans-serif;">Estamos validando seu documento...</h2>
+            <p class="text-muted">Por favor, aguarde enquanto processamos sua solicitação.</p>
+            <img src="{% static 'img/loading.gif' %}" alt="Carregando..." style="width: 80px;" class="my-4">
+        </div>
+
+        <div id="error-section" style="display: none;">
+            <div class="alert alert-warning">Não conseguimos validar seu documento.</div>
+            <a href="{% url 'accounts:validation' %}" class="btn btn-outline-primary">Tentar novamente</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const errorSection = document.getElementById('error-section');
+    const loadingSection = document.getElementById('loading-section');
+
+    async function checkStatus() {
+        try {
+            const response = await fetch("{% url 'accounts:check_validation_status' %}");
+            const data = await response.json();
+
+            if (data.status === 'valid') {
+                window.location.href = "{% url 'home:home' %}";
+            } else if (data.status === 'invalid') {
+                loadingSection.style.display = 'none';
+                errorSection.style.display = 'block';
+            }
+        } catch (error) {
+            console.error("Erro ao verificar status:", error);
+        }
+    }
+
+    setInterval(checkStatus, 5000);
+});
+</script>
+{% endblock %}

@@ -11,15 +11,13 @@
 
 <div class="d-flex justify-content-center align-items-start" style="min-height: 80vh; padding-top: 20vh;">
     <div class="container text-center bg-light p-4 rounded" style="max-width: 700px;">
-
+        
         <div class="d-flex align-items-center justify-content-center mb-4">
             <h2 class="m-0" style="font-family: 'Poppins', sans-serif; font-weight: 400; font-weight: bold;">Valide sua Torcida</h2>
         </div>
 
-        {% bootstrap_messages %}
-
         {% if form.non_field_errors %}
-            <div class="alert alert-danger text-start">
+            <div class="alert alert-danger text-center">
                 {% for error in form.non_field_errors %}
                     <p class="mb-0">{{ error }}</p>
                 {% endfor %}
@@ -65,7 +63,7 @@
                 </div>
             </div>
 
-            {% bootstrap_button "Validar" button_type="submit" button_class="btn btn-success w-100 mt-3 hover-grow" id="submit-button" disabled=True%}
+            {% bootstrap_button "Validar" button_type="submit" button_class="btn btn-success w-100 mt-2 hover-grow" id="submit-button" disabled=True%}
         </form>
 
     </div>

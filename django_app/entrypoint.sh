@@ -26,5 +26,5 @@ if [ "$DEBUG" = "1" ]; then
   exec python manage.py runserver 0.0.0:8000
 else
   echo "PRODUCTION MODE 🚀"
-  exec uvicorn core.asgi:application --host 0.0.0.0 --port 8000 --workers 4
+  exec uvicorn core.asgi:application --host 0.0.0.0 --port 8000 --workers 2
 fi

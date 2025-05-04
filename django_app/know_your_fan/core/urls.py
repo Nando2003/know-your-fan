@@ -7,6 +7,8 @@ from django.urls import path, re_path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     
+    path('', include('apps.home.urls')),
+    
     path('accounts/', include('apps.accounts.urls')),
     
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
