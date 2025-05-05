@@ -58,6 +58,9 @@ def validation_webhook_view(request: HttpRequest) -> JsonResponse:
                 user_info.full_clean()
                 user_info.save()
 
+                request_info.user.user_info = user_info # type: ignore
+                request_info.user.save()
+
             request_info.status = "valid"
         else:
             request_info.status = "invalid"

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Meus Dashboards{% endblock %}
+
+{% block content %}
+{% include "includes/auth_navbar.html" %}
+
+<div class="container py-5">
+  <!-- Cabeçalho com título e botão de criar -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Meus Dashboards</h1>
+    <a href="{% url 'dashboard:dashboard_create' %}" class="btn btn-primary btn-lg">
+      <i class="bi bi-plus-lg"></i> Novo Dashboard
+    </a>
+  </div>
+
+  {% if dashboards %}
+    <div class="row g-4">
+      {% for dash in dashboards %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100
+                      {% if dash.news_status == 'finished' and dash.twitter_status == 'finished' %}
+                        border-success
+                      {% else %}
+                        border-danger
+                      {% endif %}">
+            <div class="card-body d-flex flex-column">
+              <!-- Logo e metadados -->
+              <div class="d-flex align-items-center mb-3">
+                {% if dash.fan_profile.org_preference.logo %}
+                  <img src="{{ dash.fan_profile.org_preference.logo }}"
+                       alt="{{ dash.fan_profile.org_preference.name }}"
+                       class="me-3"
+                       style="height:48px;width:48px;object-fit:contain">
+                {% endif %}
+                <div>
+                  <h5 class="card-title mb-0">
+                    {{ dash.fan_profile.org_preference.name }}
+                  </h5>
+                  <small class="text-muted">
+                    Criado em {{ dash.fan_profile.created_at|date:"d/m/Y H:i" }}
+                  </small>
+                </div>
+              </div>
+
+              <!-- Status e botão de ação -->
+              <div class="mt-auto">
+                {% if dash.news_status == 'finished' and dash.twitter_status == 'finished' %}
+                  <span class="badge bg-success mb-3">Concluído</span>
+                  <a href="{% url 'dashboard:dashboard_detail' dash.pk %}"
+                     class="btn btn-outline-success w-100">
+                    Ver Resultado
+                  </a>
+                {% else %}
+                  <span class="badge bg-danger mb-3">Em Andamento</span>
+                  <button class="btn btn-outline-secondary w-100" disabled>
+                    Ainda não pronto
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- Espaço maior separando o título da mensagem -->
+    <div class="row mt-5">
+      <div class="col text-center">
+        <p class="text-muted fs-5">
+          Você ainda não criou nenhum dashboard.
+        </p>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

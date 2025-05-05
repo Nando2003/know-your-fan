@@ -2,8 +2,8 @@ import re
 import datetime
 from uuid import uuid4
 from django.db import models
-from django.conf import settings
 from django.core.exceptions import ValidationError
+from apps.accounts.models.custom_user_model import CustomUser
 
 
 class RequestUserInfo(models.Model):
@@ -13,7 +13,7 @@ class RequestUserInfo(models.Model):
         ("invalid", "Inválido"),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="requests")
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="requests")
 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)

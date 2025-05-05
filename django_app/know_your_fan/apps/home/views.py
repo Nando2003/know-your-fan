@@ -12,6 +12,7 @@ class HomeView(TemplateView):
     template_name = 'home/home.html'
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.user_info is not None: # type: ignore
+        if request.user.user_info is None: # type: ignore
             return redirect("accounts:validation")
+
         return super().dispatch(request, *args, **kwargs)

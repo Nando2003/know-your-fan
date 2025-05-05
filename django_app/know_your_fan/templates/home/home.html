@@ -7,6 +7,41 @@
 
 {% block content %}
 
-{% include "includes/navbar.html" %}
+{% include "includes/auth_navbar.html" %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card shadow-lg rounded-4 border-0">
+        <div class="card-body p-5">
+          <h1 class="text-center mb-4">Bem-vindo ao Projeto Real Fan</h1>
+
+          <p class="lead">Este projeto foi desenvolvido para criar dashboards personalizados para fãs de e-sports com base em seus dados de interação, como:</p>
+
+          <ul>
+            <li><strong>Retweets</strong> em posts da organização</li>
+            <li><strong>Curtidas</strong> em conteúdos da organização</li>
+            <li><strong>Comentários</strong> e menções</li>
+            <li><strong>Participação em eventos</strong></li>
+            <li><strong>Compras recentes</strong> relacionadas ao time</li>
+          </ul>
+
+          <p>Com base nesses critérios, um <strong>score</strong> é calculado e o fã recebe um status como Bronze, Prata, Ouro, Platina ou Diamante. Além disso, são recomendadas notícias relevantes ao seu time do coração ou jogo do coração 🤗.</p>
+
+          <hr>
+
+          <h3 class="mt-4">Validação de Identidade</h3>
+          <p>Para garantir a segurança dos dados e personalização correta, o sistema realiza uma <strong>validação automática</strong> dos documentos de identidade (RG). Essa validação utiliza OCR e leva poucos minutos. O status da validação pode ser "validando", "válido" ou "inválido".</p>
+
+          <p>Após a validação bem-sucedida, o usuário pode criar seu perfil de fã e acessar o seu dashboard completo.</p>
+
+          <div class="text-center mt-4">
+            <a href="{% url 'dashboard:dashboard_create' %}" class="btn btn-primary btn-lg">Criar Meu Perfil de Fã</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

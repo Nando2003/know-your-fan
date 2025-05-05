@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Torcedor {{ dashboard.fan_profile.org_preference.name }}{% endblock %}
+
+{% block content %}
+{% include "includes/auth_navbar.html" %}
+
+<div class="container py-5">
+
+<!-- Card principal com logo e score -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+    <div class="card shadow rounded-4">
+        <div class="card-header text-center bg-white border-0 py-4">
+        {% with org=dashboard.fan_profile.org_preference %}
+            {% if org.logo %}
+            <img src="{{ org.logo }}" alt="{{ org.name }}" style="height:80px; object-fit:contain;">
+            {% endif %}
+            <h2 class="mt-3">Torcedor <strong>{{ org.name }}</strong></h2>
+        {% endwith %}
+        </div>
+        <div class="card-body text-center">
+        <h4 class="mb-3 text-muted">Painel de Atividades</h4>
+        <p class="h3 mb-2">Score: <strong>{{ score }}</strong></p>
+
+        {% if score >= 200 %}
+            <span class="badge bg-secondary px-3 py-2">Diamante</span>
+        {% elif score >= 150 %}
+            <span class="badge bg-info px-3 py-2">Platina</span>
+        {% elif score >= 100 %}
+            <span class="badge bg-warning px-3 py-2">Ouro</span>
+        {% elif score >= 50 %}
+            <span class="badge bg-light text-dark px-3 py-2">Prata</span>
+        {% else %}
+            <span class="badge bg-dark px-3 py-2">Bronze</span>
+        {% endif %}
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Critérios Cumpridos -->
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+    <div class="card shadow rounded-4">
+        <div class="card-body">
+        <h5 class="mb-4 text-center">Engajamento com a Organização</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex align-items-center">
+            {% if dashboard.fan_profile.rt_org_posts %}
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+            {% else %}
+                <i class="bi bi-x-circle-fill text-danger me-2"></i>
+            {% endif %}
+            Realizou <strong>{{ dashboard.fan_profile.rt_org_posts }}</strong> retweet{{ dashboard.fan_profile.rt_org_posts|pluralize }} da organização
+            </li>
+            <li class="list-group-item d-flex align-items-center">
+            {% if dashboard.fan_profile.liked_org_posts %}
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+            {% else %}
+                <i class="bi bi-x-circle-fill text-danger me-2"></i>
+            {% endif %}
+            Deu <strong>{{ dashboard.fan_profile.liked_org_posts }}</strong> curtida{{ dashboard.fan_profile.liked_org_posts|pluralize }} em posts da organização
+            </li>
+            <li class="list-group-item d-flex align-items-center">
+            {% if dashboard.fan_profile.interacted_org_posts %}
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+            {% else %}
+                <i class="bi bi-x-circle-fill text-danger me-2"></i>
+            {% endif %}
+            Fez <strong>{{ dashboard.fan_profile.interacted_org_posts }}</strong> comentário{{ dashboard.fan_profile.interacted_org_posts|pluralize }} ou menção à organização
+            </li>
+        </ul>
+        </div>
+    </div>
+    </div>
+</div>
+
+  <!-- Notícias Recomendadas -->
+  <h3 class="mb-4 text-center">Notícias Recomendadas</h3>
+  <div class="row g-4 justify-content-center">
+    {% for news in dashboard.news.all|slice:":5" %}
+      <div class="col-12 col-sm-6 col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ news.title }}</h5>
+            {% if news.description %}
+              <p class="card-text mb-3">{{ news.description }}</p>
+            {% endif %}
+            <a href="{{ news.source }}" target="_blank" class="mt-auto btn btn-outline-primary">
+              Ver no site
+            </a>
+          </div>
+          <div class="card-footer text-muted small">
+            {{ news.created_at|date:"d/m/Y H:i" }}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted">Nenhuma notícia disponível.</p>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

@@ -84,6 +84,19 @@ services:
     mem_limit: 4g
     restart: unless-stopped
 
+  scheduler_scraper_app:
+    container_name: scheduler_scraper_app
+    build:
+      context: ./scheduler_scraper_app
+    volumes:
+      - ./scheduler_scraper_app/news_scraper:/news_scraper
+    env_file:
+      - ./dotenv_files/.env
+    networks:
+      - internal_net
+    mem_limit: 4g
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:

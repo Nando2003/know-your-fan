@@ -5,7 +5,7 @@ import asyncio
 import easyocr
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
-from services.document_ocr_service import easyocr_fulltext, best_rotation, enhance, read_image_bytes
+from services.document_ocr_service import easyocr_fulltext, best_rotation, enhance
 
 router = APIRouter()
 reader = easyocr.Reader(['en'], gpu=False)
@@ -51,13 +51,14 @@ async def upload_rg(
                 "rg_front": text_front,
                 "rg_back": text_back,
             }
-
-            print(f"Task {task_id} completed successfully.")
             
             async with httpx.AsyncClient() as client:
                 await client.post(
                     DJANGO_WEBHOOK_URL,
-                    headers={"Host": "localhost", "X-WEBHOOK-TOKEN": X_WEBHOOK_TOKEN},
+                    headers={
+                        "Host": "localhost",
+                        "X-WEBHOOK-TOKEN": X_WEBHOOK_TOKEN
+                    },
                     json=result,
                     timeout=60
                 )
@@ -66,7 +67,10 @@ async def upload_rg(
             async with httpx.AsyncClient() as client:
                 await client.post(
                     DJANGO_WEBHOOK_URL,
-                    headers={"Host": "localhost", "X-WEBHOOK-TOKEN": X_WEBHOOK_TOKEN},
+                    headers={
+                        "Host": "localhost",
+                        "X-WEBHOOK-TOKEN": X_WEBHOOK_TOKEN
+                    },
                     json={"task_id": task_id, "error": str(e)},
                     timeout=60
                 )

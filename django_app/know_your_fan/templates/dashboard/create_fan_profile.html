@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Perfil Torcedor{% endblock %}
+
+{% block content %}
+{% include "includes/auth_navbar.html" %}
+
+<div class="d-flex justify-content-center align-items-start py-5">
+  <div class="bg-light p-4 rounded shadow-sm" style="max-width: 800px; width: 100%;">
+    <h2 class="text-center mb-4">Conte mais sobre você</h2>
+
+    {% if not twitter_logged_in %}
+      <div class="alert alert-warning text-center mb-4">
+        Você precisa <strong>conectar o Twitter</strong> para preencher o formulário.
+      </div>
+      <div class="text-center mb-4">
+        <button type="button" class="btn btn-info" id="connect-twitter">
+          <i class="bi bi-twitter me-2"></i> Conectar com Twitter
+        </button>
+      </div>
+    {% else %}
+      <div class="alert alert-success text-center mb-4">
+        Twitter conectado com sucesso!
+      </div>
+    {% endif %}
+
+    {% if twitter_logged_in %}
+      <form method="post" id="fanprofile-form" novalidate>
+        {% csrf_token %}
+        {% if twitter_tokens %}
+          <input type="hidden" name="twitter_access_token"
+                 value="{{ twitter_tokens.access_token }}">
+        {% endif %}
+
+        {% bootstrap_form form %}
+
+        <!-- Eventos -->
+        <h4 class="mt-4">Eventos (máx. 8)</h4>
+        {{ events_fs.management_form }}
+        <div id="events-container">
+          {% for subform in events_fs %}
+            <div class="card mb-3 event-form p-3 position-relative">
+              {% bootstrap_form subform %}
+              {% if subform.instance.pk %}
+                <input type="checkbox"
+                       name="{{ subform.DELETE.html_name }}"
+                       id="{{ subform.DELETE.id_for_label }}"
+                       class="d-none delete-checkbox" />
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div id="events-empty-form" class="d-none">
+          <div class="card mb-3 event-form p-3 position-relative">
+            {% bootstrap_form events_fs.empty_form %}
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm position-absolute top-0 end-0 m-2 remove-form"
+                    title="Remover este evento">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-primary mb-3" id="add-event">
+          + Adicionar evento
+        </button>
+
+        <!-- Compras -->
+        <h4 class="mt-4">Compras (máx. 8)</h4>
+        {{ purchases_fs.management_form }}
+        <div id="purchases-container">
+          {% for subform in purchases_fs %}
+            <div class="card mb-3 purchase-form p-3 position-relative">
+              {% bootstrap_form subform %}
+              {% if subform.instance.pk %}
+                <input type="checkbox"
+                       name="{{ subform.DELETE.html_name }}"
+                       id="{{ subform.DELETE.id_for_label }}"
+                       class="d-none delete-checkbox" />
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div id="purchases-empty-form" class="d-none">
+          <div class="card mb-3 purchase-form p-3 position-relative">
+            {% bootstrap_form purchases_fs.empty_form %}
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm position-absolute top-0 end-0 m-2 remove-form"
+                    title="Remover esta compra">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-primary mb-4" id="add-purchase">
+          + Adicionar compra
+        </button>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-success px-5" id="submit-btn">
+            Salvar
+          </button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const twitterReady = {{ twitter_logged_in|yesno:"true,false" }};
+
+  if (!twitterReady) {
+    // —–––––––––––––––––––––––––––––––––––––––––––––
+    // Polling para verificar conexão do Twitter
+    // —–––––––––––––––––––––––––––––––––––––––––––––
+    function checkTwitterSession() {
+      fetch("{% url 'dashboard:twitter_ready' %}")
+        .then(r => r.json())
+        .then(data => {
+          if (data.ready && data.access_token) {
+            window.location.reload();
+          }
+        })
+        .catch(console.error);
+    }
+
+    // —–––––––––––––––––––––––––––––––––––––––––––––
+    // Popup OAuth
+    // —–––––––––––––––––––––––––––––––––––––––––––––
+    const twitterBtn = document.getElementById('connect-twitter');
+    if (twitterBtn) {
+      twitterBtn.addEventListener('click', () => {
+        const popup = window.open(
+          "{% url 'dashboard:twitter_login' %}",
+          "ConectarComTwitter",
+          "width=600,height=600"
+        );
+        if (!popup) {
+          alert('Permita popups para se conectar ao Twitter.');
+          return;
+        }
+        const popupCheck = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(popupCheck);
+            checkTwitterSession();
+          }
+        }, 500);
+      });
+    }
+    setInterval(checkTwitterSession, 5000);
+  }
+
+  // —–––––––––––––––––––––––––––––––––––––––––––––
+  // Formset dynamic add/remove
+  // —–––––––––––––––––––––––––––––––––––––––––––––
+  function setupFormset(btnId, containerId, prefix, emptyFormId) {
+    const addBtn     = document.getElementById(btnId);
+    const container  = document.getElementById(containerId);
+    const totalInput = document.querySelector(`input[name="${prefix}-TOTAL_FORMS"]`);
+    const maxForms   = 8;
+
+    function bindRemove(button) {
+      button.addEventListener('click', () => {
+        const card = button.closest('.event-form, .purchase-form');
+        const cb   = card.querySelector('.delete-checkbox');
+        if (cb) {
+          cb.checked = true;
+          card.style.display = 'none';
+        } else {
+          card.remove();
+          totalInput.value = parseInt(totalInput.value,10) - 1;
+        }
+      });
+    }
+
+    container.querySelectorAll('.remove-form').forEach(bindRemove);
+
+    addBtn.addEventListener('click', () => {
+      let count = parseInt(totalInput.value,10);
+      if (count >= maxForms) {
+        alert(`Você atingiu o limite de ${maxForms} itens.`);
+        return;
+      }
+      const tpl = document.getElementById(emptyFormId).innerHTML;
+      const html = tpl.replace(/__prefix__/g, count);
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      const newCard = wrapper.firstElementChild;
+      container.appendChild(newCard);
+      totalInput.value = count + 1;
+      bindRemove(newCard.querySelector('.remove-form'));
+    });
+  }
+
+  setupFormset('add-event','events-container','events','events-empty-form');
+  setupFormset('add-purchase','purchases-container','purchases','purchases-empty-form');
+});
+</script>
+{% endblock %}

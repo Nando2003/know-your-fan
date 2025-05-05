@@ -14,11 +14,11 @@ if [ "$RUN_MODE" = "celery" ]; then
   exec celery --app=core.celery:app worker --loglevel=INFO
 fi
 
-# 4) Coleta estáticos, migrações e testes
+# 4) Coleta estáticos, migrações e testes 
 python manage.py collectstatic --noinput
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
-python manage.py test
+python manage.py populate_games
 
 # 5) Uvicorn
 if [ "$DEBUG" = "1" ]; then

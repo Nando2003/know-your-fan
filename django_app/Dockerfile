@@ -3,6 +3,13 @@ FROM python:3.12-alpine
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+RUN apk update && apk add --no-cache \
+      build-base \
+      gcc \
+      gfortran \
+      openblas-dev \
+      python3-dev
+      
 COPY ./know_your_fan /know_your_fan
 COPY ./entrypoint.sh /entrypoint.sh
 

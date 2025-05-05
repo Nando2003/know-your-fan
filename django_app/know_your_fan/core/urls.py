@@ -11,5 +11,7 @@ urlpatterns = [
     
     path('accounts/', include('apps.accounts.urls')),
     
+    path('dashboard/', include('apps.dashboard.urls')),
+    
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 ]

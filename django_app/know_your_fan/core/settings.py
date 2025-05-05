@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     
     'apps.accounts',
-    'apps.home'
+    'apps.home',
+    'apps.dashboard',
     
 ]
 
@@ -216,8 +217,6 @@ BOOTSTRAP5 = {
     },
 }
 
-
-
 # Login and logout URLs
 
 LOGIN_REDIRECT_URL = "/accounts/validation/"
@@ -225,3 +224,10 @@ LOGIN_URL = "/accounts/login/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 X_WEBHOOK_TOKEN = os.environ.get("X_WEBHOOK_TOKEN", "change-me")
+
+TWITTER_OAUTH2_CLIENT_ID = os.environ.get("TWITTER_API_KEY", "change-me")
+TWITTER_OAUTH2_CLIENT_SECRET = os.environ.get("TWITTER_SECRET_API_KEY", "change-me")
+
+TWITTER_REDIRECT_URI = "http://localhost:3000/dashboard/twitter/callback/"
+
+TWITTER_OAUTH2_SCOPES="tweet.read users.read like.read follows.read offline.access"
